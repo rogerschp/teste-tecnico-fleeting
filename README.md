@@ -48,6 +48,8 @@ Soft delete com data e horario (usuario não pode realmente deletar o registro, 
 
 # Projeto
 
+Criar um fork desse repositorio e construir o projeto em cima dele
+
 ## Backend
 
 Criar uma API Rest utilizando Nest.js contendo:
