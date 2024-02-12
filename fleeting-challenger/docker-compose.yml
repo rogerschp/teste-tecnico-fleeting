@@ -1,0 +1,14 @@
+# Use postgres/example user/password credentials
+version: '3.1'
+
+services:
+  db:
+    container_name: fleeting_challenger_db
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_DB: fleeting_challenger
+      POSTGRES_USER: rogerschp
+      POSTGRES_PASSWORD: admin
+    ports:
+      - 5432:5432
