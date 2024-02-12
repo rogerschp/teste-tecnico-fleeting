@@ -42,9 +42,9 @@ export class TodoController {
   @Get('/:id')
   getTodoById(
     @Param('id') id_Todo: string,
-    @GetUser() user: string,
+    @GetUser() user: JwtPayload,
   ): Promise<Todo> {
-    return this.todoService.getTodoById(id_Todo, user);
+    return this.todoService.getTodoById(id_Todo, user.sub);
   }
 
   @UseGuards(AuthGuard)

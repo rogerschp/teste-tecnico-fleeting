@@ -38,12 +38,6 @@ const CreateTodoPage = () => {
     router.push("./list-todo");
   };
 
-  if (!user) {
-    // Verifica se o usuário está autenticado. Se não estiver, redireciona para a página de login
-    router.push("/login");
-    return null; // Retorna null para evitar a renderização da página de criação de tarefas
-  }
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">

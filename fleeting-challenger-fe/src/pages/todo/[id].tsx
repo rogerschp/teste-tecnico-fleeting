@@ -6,6 +6,7 @@ import { Input } from "@/components/input/Input";
 import { Select } from "@/components/select/Select";
 import { Button } from "@/components/button/Button";
 import { Textarea } from "@/components/textarea/Textarea";
+import { useAuth } from "@/contexts/AuthContext";
 
 type Response = {
   id: string;
@@ -24,6 +25,7 @@ type TodoFormData = {
 };
 
 const EditTodo = () => {
+  const { user } = useAuth();
   const router = useRouter();
   const { id } = router.query;
   const [todo, setTodo] = useState<Response | null>(null);
@@ -49,6 +51,7 @@ const EditTodo = () => {
 
   const onSubmit = async (data: TodoFormData) => {
     try {
+      console.log(data);
       const response = await api.patch(`/todo/${id}`, data);
       router.push("./list-todo");
     } catch (error) {
@@ -94,16 +97,16 @@ const EditTodo = () => {
               { value: "done", text: "Done" },
             ]}
           />
+          <div className="flex justify-between mb-4">
+            <Button type="submit">Atualizar</Button>
+            <Button
+              className="bg-red-500 text-white px-4 py-2 rounded-md mr-2"
+              onClick={() => navigateToTodoList()}
+            >
+              Voltar
+            </Button>
+          </div>
         </form>
-        <div className="flex justify-between mb-4">
-          <Button type="submit">Atualizar</Button>
-          <Button
-            className="bg-red-500 text-white px-4 py-2 rounded-md mr-2"
-            onClick={() => navigateToTodoList()}
-          >
-            Voltar
-          </Button>
-        </div>
       </div>
     </div>
   );
