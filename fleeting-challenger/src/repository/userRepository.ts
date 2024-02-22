@@ -47,35 +47,11 @@ export class UserRepository {
   }
 
   async findOneByEmail(email: string): Promise<User> {
-    try {
-      const findOne = await this.userRepository.findOne({ where: { email } });
-      if (!findOne) {
-        throw new HttpException('not found', HttpStatus.NOT_FOUND);
-      }
-      return findOne;
-    } catch (ex) {
-      console.error(ex);
-      throw new HttpException(
-        'Errror searching a user',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    return await this.userRepository.findOne({ where: { email } });
   }
 
   async findOneById(id_user: string): Promise<User> {
-    try {
-      const findOne = await this.userRepository.findOne({ where: { id_user } });
-      if (!findOne) {
-        throw new HttpException('not found', HttpStatus.NOT_FOUND);
-      }
-      return findOne;
-    } catch (ex) {
-      console.error(ex);
-      throw new HttpException(
-        'Errror searching a user',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    return await this.userRepository.findOne({ where: { id_user } });
   }
 
   async singIn(

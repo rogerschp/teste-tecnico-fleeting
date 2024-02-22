@@ -57,8 +57,9 @@ export class TodoController {
     return this.todoService.updateTodo(updateTodoDto);
   }
 
-  @Delete(':id')
-  softDelete(@Param('id') id: string, @GetUser() userId: JwtPayload) {
-    return this.todoService.softDelete(id, userId.sub);
+  @UseGuards(AuthGuard)
+  @Delete('/:id')
+  softDelete(@Param('id') id: string) {
+    return this.todoService.softDelete(id);
   }
 }

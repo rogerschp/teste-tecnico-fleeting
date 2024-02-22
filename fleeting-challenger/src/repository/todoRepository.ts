@@ -26,7 +26,7 @@ export class TodoRepository {
         title,
         description,
         status: TodoStatus.OPEN,
-        created_at: new Date().toLocaleString('pt-BR'),
+        created_at: new Date(),
         userId: user,
       });
       return await this.todoRepository.save(todo);
@@ -48,6 +48,7 @@ export class TodoRepository {
       where: where,
       take: limit,
       skip: recordsToSkip,
+      withDeleted: false,
       relations: [`user`],
     });
     return filtered;
@@ -73,13 +74,7 @@ export class TodoRepository {
     return await this.todoRepository.save(todo);
   }
 
-  async softDelete(id: string, userId: string): Promise<void> {
-    const todo = await this.getTodoById(id, userId);
-    if (!todo) {
-      throw new NotFoundException(`Task with ID "${id}" not found`);
-    }
-
-    todo.deletedAt = new Date();
-    await this.todoRepository.save(todo);
+  async softDelete(id: string) {
+    return await this.todoRepository.softDelete(id);
   }
 }

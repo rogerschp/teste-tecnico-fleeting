@@ -40,7 +40,7 @@ export class TodoService {
     return this.todoRepository.updateTodo(updateTodoDto);
   }
 
-  async softDelete(id: string, userId: string): Promise<void> {
-    return this.todoRepository.softDelete(id, userId);
+  async softDelete(id: string) {
+    return this.todoRepository.softDelete(id);
   }
 }

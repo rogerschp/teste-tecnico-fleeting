@@ -1,5 +1,6 @@
 import {
   Column,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -29,10 +30,11 @@ export class Todo {
   updated_at: Date;
 
   @Column()
-  userId: string;
-
-  @Column({ nullable: true })
+  @DeleteDateColumn()
   deletedAt: Date;
+
+  @Column()
+  userId: string;
 
   @ManyToOne(() => User, (user) => user.todos)
   @JoinColumn({ name: 'userId', referencedColumnName: 'id_user' })
