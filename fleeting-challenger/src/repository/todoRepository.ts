@@ -1,5 +1,10 @@
 import { CreateTodoDto } from '../modules/todo/dto/create-todo.dto';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GetTodoFilterDto } from 'src/modules/todo/dto/get-todo-filter.dto';
 import { UpdateTodoDto } from 'src/modules/todo/dto/update-todo.dto';
@@ -16,14 +21,19 @@ export class TodoRepository {
 
   async createTodo(createTodoDto: CreateTodoDto, user: string): Promise<Todo> {
     const { title, description } = createTodoDto;
-    const todo = this.todoRepository.create({
-      title,
-      description,
-      status: TodoStatus.OPEN,
-      created_at: new Date().toLocaleString('pt-BR'),
-      userId: user,
-    });
-    return await this.todoRepository.save(todo);
+    try {
+      const todo = this.todoRepository.create({
+        title,
+        description,
+        status: TodoStatus.OPEN,
+        created_at: new Date().toLocaleString('pt-BR'),
+        userId: user,
+      });
+      return await this.todoRepository.save(todo);
+    } catch (ex) {
+      console.error(ex);
+      throw new HttpException('Erro ao criar Todo', HttpStatus.BAD_REQUEST);
+    }
   }
 
   async getTodoFilter(getTodoFilterDto: GetTodoFilterDto) {
@@ -63,7 +73,13 @@ export class TodoRepository {
     return await this.todoRepository.save(todo);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} todo`;
+  async softDelete(id: string, userId: string): Promise<void> {
+    const todo = await this.getTodoById(id, userId);
+    if (!todo) {
+      throw new NotFoundException(`Task with ID "${id}" not found`);
+    }
+
+    todo.deletedAt = new Date();
+    await this.todoRepository.save(todo);
   }
 }

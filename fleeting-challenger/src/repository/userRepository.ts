@@ -2,7 +2,6 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
-  InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -25,6 +24,13 @@ export class UserRepository {
     const { name, email, password, created_at } = createUserDto;
 
     try {
+      const existingUser = this.findOneByEmail(email);
+      if (!existingUser) {
+        throw new HttpException(
+          'user already existis.',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
       const salt = await bcrypt.genSalt();
       const hashedPassword = await bcrypt.hash(password, salt);
       const user = this.userRepository.create({
@@ -35,21 +41,41 @@ export class UserRepository {
       });
       await this.userRepository.save(user);
     } catch (error) {
-      if (error.code === '23505') {
-        throw new HttpException('email already exists', HttpStatus.CONFLICT);
-      } else {
-        throw new InternalServerErrorException();
-      }
+      throw new HttpException('Error to create a user', HttpStatus.BAD_REQUEST);
     }
     throw new HttpException('User created successfuly', HttpStatus.CREATED);
   }
 
   async findOneByEmail(email: string): Promise<User> {
-    return await this.userRepository.findOne({ where: { email } });
+    try {
+      const findOne = await this.userRepository.findOne({ where: { email } });
+      if (!findOne) {
+        throw new HttpException('not found', HttpStatus.NOT_FOUND);
+      }
+      return findOne;
+    } catch (ex) {
+      console.error(ex);
+      throw new HttpException(
+        'Errror searching a user',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   async findOneById(id_user: string): Promise<User> {
-    return await this.userRepository.findOne({ where: { id_user } });
+    try {
+      const findOne = await this.userRepository.findOne({ where: { id_user } });
+      if (!findOne) {
+        throw new HttpException('not found', HttpStatus.NOT_FOUND);
+      }
+      return findOne;
+    } catch (ex) {
+      console.error(ex);
+      throw new HttpException(
+        'Errror searching a user',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   async singIn(
@@ -68,9 +94,5 @@ export class UserRepository {
       };
     }
     throw new UnauthorizedException();
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
   }
 }

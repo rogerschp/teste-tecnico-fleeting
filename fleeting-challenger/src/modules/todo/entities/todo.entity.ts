@@ -31,6 +31,9 @@ export class Todo {
   @Column()
   userId: string;
 
+  @Column({ nullable: true })
+  deletedAt: Date;
+
   @ManyToOne(() => User, (user) => user.todos)
   @JoinColumn({ name: 'userId', referencedColumnName: 'id_user' })
   user: User;
